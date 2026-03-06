@@ -7,6 +7,8 @@
   "scope": "./",
   "display": "standalone",
   "display_override": [
+    "tabbed",
+    "window-controls-overlay",
     "standalone",
     "minimal-ui",
     "browser"
@@ -24,50 +26,6 @@
   "iarc_rating_id": "",
   "prefer_related_applications": false,
   "related_applications": [],
-  "shortcuts": [
-    {
-      "name": "Nova Vistoria",
-      "short_name": "Nova",
-      "description": "Iniciar uma nova vistoria de campo",
-      "url": "./index.html?action=nova",
-      "icons": [
-        {
-          "src": "icons/icon-96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Vistorias Realizadas",
-      "short_name": "Histórico",
-      "description": "Ver vistorias anteriores",
-      "url": "./index.html?action=lista",
-      "icons": [
-        {
-          "src": "icons/icon-96.png",
-          "sizes": "96x96",
-          "type": "image/png"
-        }
-      ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Tela inicial do VistoriaPro"
-    },
-    {
-      "src": "icons/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "VistoriaPro em tablet"
-    }
-  ],
   "icons": [
     {
       "src": "icons/icon-72.png",
@@ -130,13 +88,94 @@
       "purpose": "maskable"
     }
   ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tela inicial do VistoriaPro"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "VistoriaPro em modo landscape"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nova Vistoria",
+      "short_name": "Nova",
+      "description": "Iniciar uma nova vistoria de campo",
+      "url": "./index.html?action=nova",
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Vistorias Realizadas",
+      "short_name": "Histórico",
+      "description": "Ver vistorias anteriores",
+      "url": "./index.html?action=lista",
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "./index.html",
+      "accept": {
+        "application/vnd.google-earth.kml+xml": [
+          ".kml"
+        ],
+        "application/zip": [
+          ".zip"
+        ]
+      },
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "launch_type": "single-client"
+    }
+  ],
+  "protocol_handlers": [
+    {
+      "protocol": "web+vistoriapro",
+      "url": "./index.html?protocolo=%s"
+    }
+  ],
   "share_target": {
     "action": "./index.html",
-    "method": "GET",
+    "method": "POST",
+    "enctype": "multipart/form-data",
     "params": {
       "title": "title",
       "text": "text",
-      "url": "url"
+      "url": "url",
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "image/*",
+            "application/vnd.google-earth.kml+xml"
+          ]
+        }
+      ]
     }
   },
   "launch_handler": {
@@ -147,9 +186,57 @@
   },
   "handle_links": "preferred",
   "scope_extensions": [],
-  "file_handlers": [],
-  "protocol_handlers": [],
-  "widgets": [],
-  "edge_side_panel": {},
-  "note_taking": {}
+  "widgets": [
+    {
+      "name": "VistoriaPro Status",
+      "short_name": "Vistoria",
+      "description": "Status da vistoria em andamento",
+      "tag": "vistoria-status",
+      "template": "generic-card",
+      "ms_ac_template": "widgets/vistoria-status.json",
+      "data": "./index.html?widget=status",
+      "type": "application/json",
+      "screenshots": [
+        {
+          "src": "icons/icon-192.png",
+          "sizes": "192x192",
+          "label": "Widget de status"
+        }
+      ],
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ],
+      "auth": false,
+      "update": 300
+    }
+  ],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "window_controls_overlay": {
+    "color": "#0a1628"
+  },
+  "note_taking": {
+    "new_note_url": "./index.html?action=nova"
+  },
+  "tab_strip": {
+    "home_tab": {
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ],
+      "scope_pattern": {
+        "pathname": "/*"
+      }
+    },
+    "new_tab_button": {
+      "url": "./index.html?action=nova"
+    }
+  }
 }
