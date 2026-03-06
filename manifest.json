@@ -1,16 +1,72 @@
 {
+  "id": "/",
   "name": "VistoriaPro - FUJAMA",
   "short_name": "VistoriaPro",
   "description": "Sistema de vistoria de campo com GPS, fotos georreferenciadas e exportação KML",
-  "start_url": "./vistoria-app.html",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui",
+    "browser"
+  ],
   "orientation": "portrait",
   "background_color": "#060d1a",
   "theme_color": "#0a1628",
   "lang": "pt-BR",
+  "dir": "ltr",
   "categories": [
     "utilities",
-    "productivity"
+    "productivity",
+    "navigation"
+  ],
+  "iarc_rating_id": "",
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Nova Vistoria",
+      "short_name": "Nova",
+      "description": "Iniciar uma nova vistoria de campo",
+      "url": "./index.html?action=nova",
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Vistorias Realizadas",
+      "short_name": "Histórico",
+      "description": "Ver vistorias anteriores",
+      "url": "./index.html?action=lista",
+      "icons": [
+        {
+          "src": "icons/icon-96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Tela inicial do VistoriaPro"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "VistoriaPro em tablet"
+    }
   ],
   "icons": [
     {
@@ -47,7 +103,13 @@
       "src": "icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "icons/icon-384.png",
@@ -59,11 +121,35 @@
       "src": "icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "screenshots": [],
-  "permissions": [
-    "geolocation"
-  ]
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "launch_handler": {
+    "client_mode": [
+      "navigate-existing",
+      "auto"
+    ]
+  },
+  "handle_links": "preferred",
+  "scope_extensions": [],
+  "file_handlers": [],
+  "protocol_handlers": [],
+  "widgets": [],
+  "edge_side_panel": {},
+  "note_taking": {}
 }
