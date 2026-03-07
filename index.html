@@ -335,7 +335,34 @@
     max-height: 0; overflow: hidden;
     transition: max-height .4s ease;
   }
-  .vc-files.open { max-height: 600px; }
+  .vc-files.open { max-height: 2400px; }
+  /* ─── Photo Gallery ─── */
+  .photo-gallery {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    padding: 12px 14px 4px;
+  }
+  .gallery-thumb {
+    width: calc(33.33% - 6px); aspect-ratio: 1/1;
+    border-radius: 8px; overflow: hidden;
+    border: 2px solid var(--border);
+    cursor: pointer; position: relative;
+    transition: transform .15s, border-color .15s;
+    flex-shrink: 0;
+  }
+  .gallery-thumb:hover { transform: scale(1.04); border-color: var(--blue); }
+  .gallery-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .gallery-thumb .thumb-idx {
+    position: absolute; bottom: 3px; right: 5px;
+    background: rgba(0,0,0,.55); color: #fff;
+    font-size: 10px; border-radius: 4px; padding: 1px 4px;
+    font-family: var(--font-head);
+  }
+  .gallery-empty {
+    padding: 12px 14px; color: var(--muted); font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+  }
   .file-item {
     display: flex; align-items: center; gap: 12px;
     padding: 10px 16px;
@@ -391,6 +418,190 @@
 
   /* CANVAS for watermark */
   #wCanvas { display: none; }
+
+  /* ═══════════════════════════════════════════════
+     CLINÔMETRO
+  ═══════════════════════════════════════════════ */
+  #clino { background: #000; }
+
+  .clino-camera {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; z-index: 0;
+  }
+  /* Linha de mira central */
+  .clino-reticle {
+    position: absolute; left: 0; right: 0;
+    top: 50%; transform: translateY(-50%);
+    z-index: 10; pointer-events: none;
+  }
+  .clino-reticle::before {
+    content: '';
+    display: block;
+    border-top: 2px dashed rgba(255,215,64,.7);
+  }
+  .clino-reticle::after {
+    content: '';
+    display: block; width: 18px; height: 18px;
+    border: 2px solid var(--yellow);
+    border-radius: 50%;
+    margin: -10px auto 0;
+  }
+
+  /* Ângulo em tempo real no centro-topo */
+  .clino-live-angle {
+    position: absolute; top: 60px; left: 0; right: 0;
+    text-align: center; z-index: 10;
+    font-family: var(--font-head);
+    color: var(--yellow);
+    text-shadow: 0 2px 12px rgba(0,0,0,.8);
+    pointer-events: none;
+    line-height: 1;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .clino-live-angle span {
+    font-size: 56px; font-weight: 800; line-height: 1;
+    letter-spacing: -1px;
+  }
+  .clino-live-angle small {
+    display: block; font-size: 13px;
+    color: rgba(255,255,255,.6); letter-spacing: 2px;
+  }
+
+  /* Barra lateral de ângulo (indicador visual) */
+  .clino-angle-bar {
+    position: absolute; right: 18px; top: 15%; bottom: 15%;
+    width: 6px; background: rgba(255,255,255,.12);
+    border-radius: 3px; z-index: 10;
+  }
+  .clino-angle-fill {
+    position: absolute; bottom: 50%; left: 0; right: 0;
+    background: var(--yellow); border-radius: 3px;
+    transition: height .08s;
+    transform-origin: bottom;
+  }
+  .clino-angle-mark {
+    position: absolute; left: -6px; right: -6px; height: 2px;
+    background: rgba(255,255,255,.4); bottom: 50%;
+  }
+
+  /* Painel inferior de controles */
+  .clino-panel {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    z-index: 20;
+    background: linear-gradient(to top, rgba(6,13,26,.97) 70%, transparent);
+    padding: 18px 16px 28px;
+  }
+
+  /* Campo de distância */
+  .clino-dist-row {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .clino-dist-label {
+    font-family: var(--font-head); font-size: 13px;
+    color: var(--muted); letter-spacing: 1px; white-space: nowrap;
+  }
+  .clino-dist-input {
+    flex: 1; background: rgba(255,255,255,.07);
+    border: 1px solid var(--border); border-radius: 8px;
+    color: var(--text); font-family: var(--font-head);
+    font-size: 18px; font-weight: 600; padding: 8px 12px;
+    outline: none; text-align: center;
+  }
+  .clino-dist-input:focus { border-color: var(--yellow); }
+  .clino-dist-unit {
+    font-family: var(--font-head); font-size: 14px;
+    color: var(--yellow); font-weight: 700;
+  }
+
+  /* Botões Base / Topo */
+  .clino-angle-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .clino-btn-angle {
+    border: none; border-radius: 10px; padding: 12px 8px;
+    font-family: var(--font-head); font-size: 15px; font-weight: 700;
+    letter-spacing: 1px; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    transition: transform .1s, box-shadow .1s;
+    position: relative;
+  }
+  .clino-btn-angle:active { transform: scale(.95); }
+  .clino-btn-base {
+    background: rgba(0,200,255,.15); border: 1.5px solid rgba(0,200,255,.4);
+    color: var(--accent);
+  }
+  .clino-btn-base.captured {
+    background: rgba(0,200,255,.3); border-color: var(--accent);
+  }
+  .clino-btn-topo {
+    background: rgba(0,230,118,.15); border: 1.5px solid rgba(0,230,118,.4);
+    color: var(--green);
+  }
+  .clino-btn-topo.captured {
+    background: rgba(0,230,118,.3); border-color: var(--green);
+  }
+  .clino-btn-angle .angle-val {
+    font-size: 22px; font-weight: 800; line-height: 1;
+  }
+  .clino-btn-angle .angle-lbl {
+    font-size: 11px; color: rgba(255,255,255,.5); letter-spacing: 1.5px;
+  }
+
+  /* Resultado */
+  .clino-result {
+    background: rgba(255,215,64,.1); border: 1.5px solid rgba(255,215,64,.4);
+    border-radius: 10px; padding: 12px 16px;
+    display: none; align-items: center; gap: 12px;
+    margin-bottom: 14px;
+  }
+  .clino-result.show { display: flex; }
+  .clino-result-icon { font-size: 28px; }
+  .clino-result-text { flex: 1; }
+  .clino-result-height {
+    font-family: var(--font-head); font-size: 32px; font-weight: 800;
+    color: var(--yellow); line-height: 1;
+  }
+  .clino-result-detail {
+    font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 1px;
+  }
+
+  /* Botão calcular + voltar */
+  .clino-action-row {
+    display: grid; grid-template-columns: auto 1fr; gap: 10px;
+  }
+  .clino-btn-back {
+    background: rgba(255,255,255,.07); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px 18px;
+    color: var(--text); font-family: var(--font-head);
+    font-size: 18px; cursor: pointer;
+  }
+  .clino-btn-calc {
+    background: linear-gradient(135deg, #b8860b, var(--yellow));
+    border: none; border-radius: 10px; padding: 14px;
+    color: #060d1a; font-family: var(--font-head);
+    font-size: 17px; font-weight: 800; letter-spacing: 1.5px;
+    cursor: pointer; transition: opacity .15s;
+  }
+  .clino-btn-calc:disabled { opacity: .4; cursor: default; }
+  .clino-btn-calc:not(:disabled):active { opacity: .8; }
+
+  /* Header do clinômetro */
+  .clino-header {
+    position: absolute; top: 0; left: 0; right: 0;
+    z-index: 20; padding: 14px 16px 0;
+    display: flex; align-items: center; gap: 10px;
+    background: linear-gradient(to bottom, rgba(6,13,26,.85), transparent);
+  }
+  .clino-title {
+    font-family: var(--font-head); font-size: 18px;
+    font-weight: 700; letter-spacing: 2px; color: var(--yellow);
+  }
+  .clino-subtitle {
+    font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-top: 1px;
+  }
 </style>
 <script>
 if ('serviceWorker' in navigator) {
@@ -471,7 +682,109 @@ function atualizarOnline() {
       <span class="btn-arrow" style="color:var(--green);">›</span>
     </button>
 
+    <button class="btn-main btn-lista" onclick="openClino()" style="border-color:rgba(255,215,64,.3);">
+      <span class="btn-icon">📐</span>
+      <span class="btn-label" style="color:var(--yellow);">Clinômetro</span>
+      <span class="btn-arrow" style="color:var(--yellow);">›</span>
+    </button>
+
     <div class="version">V 1.0.0 · VISTORIAPRO</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     TELA CLINÔMETRO
+════════════════════════════════════════════════ -->
+<div class="screen hidden" id="clino">
+
+  <!-- Câmera ao vivo -->
+  <video id="clinoVideo" class="clino-camera" autoplay playsinline muted
+       style="display:none;"></video>
+
+  <!-- Fundo fallback quando câmera indisponível -->
+  <div id="clinoCamStatus" style="
+    position:absolute; inset:0; z-index:1;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    background: linear-gradient(160deg, #060d1a 0%, #0a1e38 100%);
+    color: rgba(255,255,255,.55); font-size:14px;
+    text-align:center; padding:32px;
+    letter-spacing:.5px; line-height:1.6;
+  ">
+    <div style="font-size:48px;margin-bottom:16px;">📐</div>
+    <div id="clinoCamMsg">Iniciando câmera…</div>
+  </div>
+
+  <!-- Cabeçalho -->
+  <div class="clino-header">
+    <div>
+      <div class="clino-title">📐 CLINÔMETRO</div>
+      <div class="clino-subtitle">MEDIÇÃO DE ALTURA POR ÂNGULO</div>
+    </div>
+  </div>
+
+  <!-- Linha de mira central -->
+  <div class="clino-reticle"></div>
+
+  <!-- Ângulo em tempo real -->
+  <div class="clino-live-angle" id="clinoLiveAngle">
+    <span id="clinoAngleNum">0.0°</span>
+    <small id="clinoLiveDir">HORIZONTAL</small>
+  </div>
+
+  <!-- Indicador de sensor (canto superior direito) -->
+  <div id="clinoSensorInd" style="
+    position:absolute; top:16px; right:52px; z-index:25;
+    font-size:16px; cursor:default;
+  " title="Aguardando sensor…">⏳</div>
+
+  <!-- Barra visual lateral -->
+  <div class="clino-angle-bar">
+    <div class="clino-angle-mark"></div>
+    <div class="clino-angle-fill" id="clinoAngleFill" style="height:0%"></div>
+  </div>
+
+  <!-- Painel de controles -->
+  <div class="clino-panel">
+
+    <!-- Resultado -->
+    <div class="clino-result" id="clinoResult">
+      <div class="clino-result-icon">🌳</div>
+      <div class="clino-result-text">
+        <div class="clino-result-height" id="clinoResultHeight">—</div>
+        <div class="clino-result-detail" id="clinoResultDetail">—</div>
+      </div>
+    </div>
+
+    <!-- Distância -->
+    <div class="clino-dist-row">
+      <div class="clino-dist-label">DISTÂNCIA</div>
+      <input class="clino-dist-input" id="clinoDist" type="number"
+             inputmode="decimal" placeholder="0.0" min="0.1" step="0.1">
+      <div class="clino-dist-unit">m</div>
+    </div>
+
+    <!-- Base / Topo -->
+    <div class="clino-angle-row">
+      <button class="clino-btn-angle clino-btn-base" id="btnBase" onclick="captureBase()">
+        <span class="angle-val" id="baseVal">—</span>
+        <span class="angle-lbl">BASE</span>
+      </button>
+      <button class="clino-btn-angle clino-btn-topo" id="btnTopo" onclick="captureTopo()">
+        <span class="angle-val" id="topoVal">—</span>
+        <span class="angle-lbl">TOPO</span>
+      </button>
+    </div>
+
+    <!-- Calcular / Voltar -->
+    <div class="clino-action-row">
+      <button class="clino-btn-back" onclick="closeClino()">✕</button>
+      <button class="clino-btn-calc" id="btnCalc" onclick="calcularAltura()" disabled>
+        ⚡ CALCULAR ALTURA
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -925,19 +1238,74 @@ function finalizarVistoria() {
   stopTracker();
   stopTimer();
   setTimeout(function() {
+    var savedNome = 'Vistoria';
+    var savedVistoria = null;
     try {
       currentVistoria.endTs = Date.now();
       currentVistoria.duration = Math.floor((currentVistoria.endTs - currentVistoria.startTs) / 1000);
       currentVistoria.distance = totalDist;
       db.vistorias[currentVistoria.id] = currentVistoria;
       saveDB();
+      savedNome = currentVistoria.nome;
+      savedVistoria = currentVistoria;
     } catch(e) { console.warn('Erro ao salvar:', e); }
-    var savedNome = currentVistoria ? currentVistoria.nome : 'Vistoria';
+
+    // ── Auto-download sempre: ZIP (fotos + KML) ou só KML ────────────
+    if (savedVistoria) {
+      try {
+        var zip = new JSZip();
+        var folder = zip.folder(savedNome);
+        var temFotos = savedVistoria.photos && savedVistoria.photos.length > 0;
+        if (temFotos) {
+          savedVistoria.photos.forEach(function(p) {
+            var base64 = p.data.split(',')[1];
+            folder.file(p.name, base64, { base64: true });
+          });
+        }
+        try {
+          var kmlContent = gerarKML(savedVistoria);
+          folder.file(savedNome + '.kml', kmlContent);
+        } catch(ke) { console.warn('KML erro:', ke); }
+        var zipName = savedNome + (temFotos ? '_fotos_kml' : '_kml') + '.zip';
+        zip.generateAsync({ type: 'blob' }).then(function(blob) {
+          // Guarda URL para retry pelo botão na tela de lista
+          window._pendingDlUrl  = URL.createObjectURL(blob);
+          window._pendingDlName = zipName;
+          // Dispara download imediatamente
+          dlLink(window._pendingDlUrl, window._pendingDlName);
+          // Limpa após 60 s
+          setTimeout(function() {
+            if (window._pendingDlUrl) {
+              URL.revokeObjectURL(window._pendingDlUrl);
+              window._pendingDlUrl = null;
+              // Remove o banner de retry se ainda visível
+              var b = document.getElementById('retryDlBanner');
+              if (b) b.remove();
+            }
+          }, 60000);
+        });
+      } catch(ze) { console.warn('Erro no auto-download:', ze); }
+    }
+
+    var savedId = savedVistoria ? savedVistoria.id : null;
     currentVistoria = null;
     if (map) { try { map.off(); map.remove(); } catch(e) {} map = null; }
     document.getElementById('savingOverlay').style.display = 'none';
-    showScreen('home');
-    showToast('Vistoria "' + savedNome + '" salva!');
+    // Vai para a lista e abre automaticamente o card desta vistoria
+    renderLista();
+    showScreen('lista');
+    if (savedId) {
+      setTimeout(function() {
+        var filesEl = document.getElementById('files_' + savedId);
+        var tglEl   = document.getElementById('tgl_' + savedId);
+        if (filesEl) { filesEl.classList.add('open'); }
+        if (tglEl)   { tglEl.classList.add('open'); }
+        // Scroll suave até o card
+        var card = filesEl ? filesEl.closest('.vistoria-card') : null;
+        if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+      }, 150);
+    }
+    showToast('✅ "' + savedNome + '" salva! 📥 Baixando...');
   }, 80);
 }
 
@@ -964,6 +1332,25 @@ function renderLista() {
   const list = document.getElementById('lList');
   const vs = Object.values(db.vistorias).reverse();
   document.getElementById('lCount').textContent = vs.length;
+  // Banner de retry se o download automático foi bloqueado
+  var existing = document.getElementById('retryDlBanner');
+  if (existing) existing.remove();
+  if (window._pendingDlUrl && window._pendingDlName) {
+    var banner = document.createElement('div');
+    banner.id = 'retryDlBanner';
+    banner.style.cssText = 'margin:10px 14px 0;padding:12px 16px;background:rgba(0,200,255,.12);border:1px solid rgba(0,200,255,.35);border-radius:10px;display:flex;align-items:center;gap:10px;cursor:pointer;';
+    banner.innerHTML = '<span style="font-size:20px">📥</span>'
+      + '<div style="flex:1;font-size:13px;line-height:1.4">'
+      + '<b style="color:#00c8ff">Download pronto!</b><br>'
+      + '<span style="color:#8a9bc0">Toque aqui se o download não iniciou automaticamente.</span></div>'
+      + '<span style="font-size:18px;color:#00c8ff">⬇</span>';
+    banner.onclick = function() {
+      if (window._pendingDlUrl) {
+        dlLink(window._pendingDlUrl, window._pendingDlName);
+      }
+    };
+    list.parentNode.insertBefore(banner, list);
+  }
 
   if (vs.length === 0) {
     list.innerHTML = `<div class="l-empty"><div class="l-empty-icon">📂</div><p>Nenhuma vistoria realizada ainda.</p></div>`;
@@ -997,22 +1384,45 @@ function renderLista() {
 
 function renderFiles(v) {
   let html = '';
+
+  // ── Galeria de fotos (miniaturas 3 por linha) ────────────────────────
   if (v.photos.length === 0) {
-    html += '<div class="file-item"><span class="file-icon">&#x2139;&#xFE0F;</span><span class="file-name">Nenhuma foto</span></div>';
-  }
-  v.photos.forEach(function(p, i) {
-    html += '<div class="file-item" onclick="openPhoto(\''+v.id+'\','+i+')">';
-    html += '<span class="file-icon">&#x1F5BC;&#xFE0F;</span>';
-    html += '<span class="file-name">'+p.name+'</span>';
-    html += '<span class="file-size">'+(p.lat ? p.lat.toFixed(4)+',' : '')+(p.lng ? p.lng.toFixed(4) : '')+'</span>';
-    html += '<span class="file-dl" onclick="event.stopPropagation();dlPhoto(\''+v.id+'\','+i+')">&#x2B07;</span>';
+    html += '<div class="gallery-empty">📭 Nenhuma foto registrada nesta vistoria.</div>';
+  } else {
+    html += '<div class="photo-gallery">';
+    v.photos.forEach(function(p, i) {
+      html += '<div class="gallery-thumb" onclick="openPhoto(\''+v.id+'\','+i+')" title="'+p.name+'">';
+      html += '<img src="'+p.data+'" alt="Foto '+(i+1)+'" loading="lazy">';
+      html += '<div class="thumb-idx">'+(i+1)+'</div>';
+      html += '</div>';
+    });
     html += '</div>';
-  });
-  html += '<div style="display:flex;gap:8px;margin:10px 16px;">';
-  html += '<button class="btn-dl-all" style="flex:1" onclick="dlAll(\''+v.id+'\')">&#x2B07; Fotos ('+v.photos.length+')</button>';
-  html += '<button class="btn-dl-all" style="flex:1;color:var(--green);border-color:rgba(0,230,118,.3)" onclick="dlKML(\''+v.id+'\')">&#x1F5FA; KML</button>';
+  }
+
+  // ── Lista de arquivos (nome + coords) ────────────────────────────────
+  if (v.photos.length > 0) {
+    html += '<div style="padding:0 14px 2px;">';
+    v.photos.forEach(function(p, i) {
+      html += '<div class="file-item" onclick="openPhoto(\''+v.id+'\','+i+')">';
+      html += '<span class="file-icon">🖼️</span>';
+      html += '<span class="file-name">'+p.name+'</span>';
+      html += '<span class="file-size">'+(p.lat ? p.lat.toFixed(5)+',' : '')+(p.lng ? p.lng.toFixed(5) : '')+'</span>';
+      html += '<span class="file-dl" onclick="event.stopPropagation();dlPhoto(\''+v.id+'\','+i+')">⬇</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+  }
+
+  // ── Botões de download ───────────────────────────────────────────────
+  html += '<div style="display:flex;gap:8px;margin:10px 14px 4px;">';
+  if (v.photos.length > 0) {
+    html += '<button class="btn-dl-all" style="flex:1" onclick="dlAll(\''+v.id+'\')">⬇ Fotos ('+v.photos.length+')</button>';
+  }
+  html += '<button class="btn-dl-all" style="flex:'+(v.photos.length>0?'1':'2')+';color:var(--green);border-color:rgba(0,230,118,.3)" onclick="dlKML(\''+v.id+'\')">🗺 KML</button>';
   html += '</div>';
-  html += '<button class="btn-dl-all" style="margin-top:0;color:var(--yellow);border-color:rgba(255,215,64,.3)" onclick="dlZipCompleto(\''+v.id+'\')">&#x1F4E6; Baixar Tudo (Fotos + KML)</button>';
+  if (v.photos.length > 0) {
+    html += '<button class="btn-dl-all" style="margin:0 14px 12px;color:var(--yellow);border-color:rgba(255,215,64,.3);width:calc(100% - 28px)" onclick="dlZipCompleto(\''+v.id+'\')">📦 Baixar Tudo (Fotos + KML)</button>';
+  }
   return html;
 }
 
@@ -1175,6 +1585,312 @@ function dlLink(url, name) {
   a.href = url; a.download = name;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+// CLINÔMETRO
+// Usa DeviceOrientation para medir ângulos verticais e calcula
+// a altura pelo método trigonométrico:
+//
+//   Se base abaixo do horizonte (ângulo negativo) e topo acima:
+//     H = D * (tan(αTopo) + tan(|αBase|))  + alturaOlho
+//
+//   Se ambos acima do horizonte:
+//     H = D * (tan(αTopo) - tan(αBase))    + alturaOlho
+//
+//   (αBase = ângulo ao pé do objeto; αTopo = ângulo ao topo)
+// ═══════════════════════════════════════════════════════════════
+
+var _clinoStream    = null;  // MediaStream da câmera
+var _clinoAngle     = 0;     // ângulo atual em graus (pitch)
+var _clinoBase      = null;  // ângulo capturado para a base
+var _clinoTopo      = null;  // ângulo capturado para o topo
+var _clinoOrientEvt = null;  // listener de orientação
+
+// ── Abre o clinômetro ────────────────────────────────────────
+function openClino() {
+  _clinoBase = null;
+  _clinoTopo = null;
+  document.getElementById('baseVal').textContent   = '—';
+  document.getElementById('topoVal').textContent   = '—';
+  document.getElementById('btnBase').classList.remove('captured');
+  document.getElementById('btnTopo').classList.remove('captured');
+  document.getElementById('clinoResult').classList.remove('show');
+  document.getElementById('btnCalc').disabled = true;
+  document.getElementById('clinoDist').value = '';
+
+  // Mostra a tela imediatamente
+  showScreen('clino');
+
+  // Solicita permissão de orientação (iOS 13+)
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    DeviceOrientationEvent.requestPermission()
+      .then(function(state) {
+        if (state === 'granted') _startClinoOrientation();
+        else _showClinoCameraError('Permissão de orientação negada.');
+      })
+      .catch(function(e) { console.warn('Orientação:', e); });
+  } else {
+    _startClinoOrientation();
+  }
+
+  // Abre câmera — tenta traseira primeiro, depois qualquer câmera
+  _startClinoCamera();
+}
+
+function _startClinoCamera() {
+  var video = document.getElementById('clinoVideo');
+  var status = document.getElementById('clinoCamStatus');
+
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    if (status) status.textContent = '📵 Câmera não disponível neste dispositivo.';
+    return;
+  }
+
+  // Tenta câmera traseira (environment)
+  navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 } }
+  })
+  .then(function(stream) {
+    _clinoStream = stream;
+    video.srcObject = stream;
+    video.style.display = 'block';
+    if (status) status.style.display = 'none';
+    video.play().catch(function(e) { console.warn('video.play():', e); });
+  })
+  .catch(function(err) {
+    console.warn('Câmera traseira falhou, tentando qualquer câmera:', err);
+    // Fallback: qualquer câmera disponível
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then(function(stream) {
+      _clinoStream = stream;
+      video.srcObject = stream;
+      video.style.display = 'block';
+      if (status) status.style.display = 'none';
+      video.play().catch(function(e) { console.warn('video.play():', e); });
+    })
+    .catch(function(err2) {
+      console.warn('Nenhuma câmera disponível:', err2);
+      _showClinoCameraError('📷 ' + (err2.name === 'NotAllowedError'
+        ? 'Permissão da câmera negada. O clinômetro funciona normalmente sem ela.'
+        : 'Câmera não encontrada. O clinômetro funciona normalmente sem ela.'));
+    });
+  });
+}
+
+function _showClinoCameraError(msg) {
+  var status = document.getElementById('clinoCamStatus');
+  var msgEl  = document.getElementById('clinoCamMsg');
+  if (msgEl)  msgEl.textContent = msg;
+  if (status) status.style.display = 'flex';
+}
+
+// ── Listener de orientação do dispositivo ────────────────────
+function _startClinoOrientation() {
+  // Remove qualquer listener anterior
+  if (_clinoOrientEvt) {
+    window.removeEventListener('deviceorientation', _clinoOrientEvt, true);
+    _clinoOrientEvt = null;
+  }
+
+  var sensorOk = false;
+
+  _clinoOrientEvt = function(e) {
+    // beta = rotação em torno do eixo X (frente-trás)
+    // Valores: celular deitado na mesa = 0°
+    //          celular em pé (retrato) = 90°  
+    //          celular inclinado pra frente = valores entre 0-90
+    // Ângulo em relação ao HORIZONTE = beta - 90
+    // (quando beta=90 o celular está vertical = 0° de inclinação em relação ao horizonte)
+
+    var beta  = e.beta;
+    var gamma = e.gamma;
+
+    if (beta === null || beta === undefined) return;
+
+    // Marca que o sensor está funcionando
+    if (!sensorOk) {
+      sensorOk = true;
+      var ind = document.getElementById('clinoSensorInd');
+      if (ind) { ind.textContent = '🟢'; ind.title = 'Sensor ativo'; }
+    }
+
+    // Calcula o pitch (ângulo vertical em relação ao horizonte)
+    // beta vai de -180 a 180
+    // Em modo retrato normal: beta ~90 quando horizontal, ~0 quando deitado
+    var pitch;
+    if (gamma !== null && gamma !== undefined && Math.abs(gamma) > 45) {
+      // Celular em modo paisagem — usa gamma corrigido
+      pitch = gamma > 0 ? (90 - gamma) : (-90 - gamma);
+    } else {
+      // Modo retrato (normal) — usa beta
+      pitch = beta - 90;
+    }
+
+    // Garante faixa -90 a +90
+    if (pitch > 90)  pitch = 90;
+    if (pitch < -90) pitch = -90;
+
+    _clinoAngle = Math.round(pitch * 10) / 10;
+    _updateClinoDisplay(_clinoAngle);
+  };
+
+  window.addEventListener('deviceorientation', _clinoOrientEvt, true);
+
+  // Avisa se depois de 2s o sensor não disparou nenhum evento
+  setTimeout(function() {
+    if (!sensorOk) {
+      var ind = document.getElementById('clinoSensorInd');
+      if (ind) { ind.textContent = '🔴'; ind.title = 'Sensor não detectado'; }
+      var msgEl = document.getElementById('clinoCamMsg');
+      // só mostra aviso se câmera também não abriu
+      if (msgEl && document.getElementById('clinoVideo').style.display === 'none') {
+        msgEl.textContent = '⚠️ Sensor de inclinação não disponível neste dispositivo.';
+      }
+    }
+  }, 2000);
+}
+
+// ── Atualiza display do ângulo em tempo real ─────────────────
+function _updateClinoDisplay(angle) {
+  var el = document.getElementById('clinoLiveAngle');
+  if (!el) return;
+
+  // Atualiza o número do ângulo (primeiro nó de texto direto do elemento)
+  var sign = angle >= 0 ? '+' : '';
+  var txt  = sign + angle.toFixed(1) + '°';
+
+  // Usa getElementById seguro para o span do número
+  var numEl = document.getElementById('clinoAngleNum');
+  if (numEl) {
+    numEl.textContent = txt;
+  } else {
+    el.firstChild.textContent = txt;
+  }
+
+  // Direção
+  var dir = document.getElementById('clinoLiveDir');
+  if (dir) {
+    if (Math.abs(angle) < 1)     dir.textContent = 'HORIZONTAL';
+    else if (angle > 0)          dir.textContent = 'ACIMA DO HORIZONTE ▲';
+    else                         dir.textContent = 'ABAIXO DO HORIZONTE ▼';
+  }
+
+  // Barra lateral
+  var fill = document.getElementById('clinoAngleFill');
+  if (!fill) return;
+  var pct = Math.abs(angle) / 90 * 50;
+  fill.style.height = pct + '%';
+  if (angle >= 0) {
+    fill.style.bottom = '50%';
+    fill.style.top    = 'auto';
+    fill.style.background = 'var(--green)';
+  } else {
+    fill.style.top    = '50%';
+    fill.style.bottom = 'auto';
+    fill.style.background = 'var(--red)';
+  }
+}
+
+// ── Captura ângulo da BASE ───────────────────────────────────
+function captureBase() {
+  _clinoBase = _clinoAngle;
+  var el = document.getElementById('baseVal');
+  el.textContent = (_clinoBase >= 0 ? '+' : '') + _clinoBase.toFixed(1) + '°';
+  document.getElementById('btnBase').classList.add('captured');
+  showToast('📐 Base capturada: ' + el.textContent);
+  _checkCalcReady();
+}
+
+// ── Captura ângulo do TOPO ───────────────────────────────────
+function captureTopo() {
+  _clinoTopo = _clinoAngle;
+  var el = document.getElementById('topoVal');
+  el.textContent = (_clinoTopo >= 0 ? '+' : '') + _clinoTopo.toFixed(1) + '°';
+  document.getElementById('btnTopo').classList.add('captured');
+  showToast('📐 Topo capturado: ' + el.textContent);
+  _checkCalcReady();
+}
+
+// ── Habilita botão calcular quando tiver dist + base + topo ─
+function _checkCalcReady() {
+  var dist = parseFloat(document.getElementById('clinoDist').value);
+  var ok = _clinoBase !== null && _clinoTopo !== null && dist > 0;
+  document.getElementById('btnCalc').disabled = !ok;
+}
+
+// ── Input de distância também verifica prontidão ─────────────
+document.addEventListener('DOMContentLoaded', function() {
+  var di = document.getElementById('clinoDist');
+  if (di) di.addEventListener('input', _checkCalcReady);
+});
+
+// ── Calcula e exibe a altura ─────────────────────────────────
+function calcularAltura() {
+  var dist = parseFloat(document.getElementById('clinoDist').value);
+  if (!dist || dist <= 0) { showToast('⚠️ Informe a distância!'); return; }
+  if (_clinoBase === null) { showToast('⚠️ Capture o ângulo da BASE!'); return; }
+  if (_clinoTopo === null) { showToast('⚠️ Capture o ângulo do TOPO!'); return; }
+
+  // Converte para radianos
+  var radBase = _clinoBase * Math.PI / 180;
+  var radTopo = _clinoTopo * Math.PI / 180;
+
+  // Calcula altura pelo método trigonométrico
+  // H = D * tan(αTopo) - D * tan(αBase)
+  // (funciona para qualquer combinação de ângulos pos/neg)
+  var hTopo = dist * Math.tan(radTopo);
+  var hBase = dist * Math.tan(radBase);
+  var altura = hTopo - hBase;
+
+  // Exibe resultado
+  var resultEl   = document.getElementById('clinoResult');
+  var heightEl   = document.getElementById('clinoResultHeight');
+  var detailEl   = document.getElementById('clinoResultDetail');
+
+  heightEl.textContent = altura.toFixed(2) + ' m';
+  detailEl.textContent =
+    'D=' + dist.toFixed(1) + 'm  |  BASE ' +
+    (_clinoBase >= 0 ? '+' : '') + _clinoBase.toFixed(1) + '°  |  TOPO ' +
+    (_clinoTopo >= 0 ? '+' : '') + _clinoTopo.toFixed(1) + '°';
+
+  resultEl.classList.add('show');
+
+  // Feedback visual
+  showToast('🌳 Altura: ' + altura.toFixed(2) + ' m');
+}
+
+// ── Fecha o clinômetro e libera recursos ─────────────────────
+function closeClino() {
+  // Para câmera
+  if (_clinoStream) {
+    _clinoStream.getTracks().forEach(function(t) { t.stop(); });
+    _clinoStream = null;
+  }
+  // Remove listener de orientação
+  if (_clinoOrientEvt) {
+    window.removeEventListener('deviceorientation', _clinoOrientEvt, true);
+    _clinoOrientEvt = null;
+  }
+  // Limpa vídeo e restaura estado inicial
+  var v = document.getElementById('clinoVideo');
+  if (v) { v.srcObject = null; v.style.display = 'none'; }
+  var status = document.getElementById('clinoCamStatus');
+  var msgEl  = document.getElementById('clinoCamMsg');
+  if (status) status.style.display = 'flex';
+  if (msgEl)  msgEl.textContent = 'Iniciando câmera…';
+  // Reseta indicador de sensor
+  var ind = document.getElementById('clinoSensorInd');
+  if (ind) { ind.textContent = '⏳'; ind.title = 'Aguardando sensor…'; }
+  // Reseta ângulo exibido
+  var numEl = document.getElementById('clinoAngleNum');
+  if (numEl) numEl.textContent = '0.0°';
+  var dir = document.getElementById('clinoLiveDir');
+  if (dir) dir.textContent = 'HORIZONTAL';
+
+  showScreen('home');
 }
 
 // ─── INIT ────────────────────────────────────────────────
